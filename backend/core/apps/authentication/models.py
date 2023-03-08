@@ -16,7 +16,7 @@ class BankAccount(models.Model):
     objects = models.Manager()
 
     class Meta:
-        db_table = 'bank_account'
+        db_table = 'authentication_bank_account'
 
 
 class CustomUserManager(BaseUserManager):
@@ -68,6 +68,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    class Meta:
+        db_table = 'authentication_custom_user'
 
 
 User = get_user_model()
