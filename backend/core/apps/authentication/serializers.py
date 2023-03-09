@@ -7,40 +7,42 @@ from core.apps.authentication.models import BankAccount, User
 class BankAccountCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
-        fields = ['bank', 'branch', 'account_name', 'account_number']
+        fields = ['account_name', 'account_number', 'bank', 'branch']
 
 
-class BankAccountListSerializer(serializers.ModelSerializer):
+class BankAccountListSerializer(BankAccountCreateSerializer):
+    class Meta(BankAccountCreateSerializer.Meta):
+        fields = ['id'] + BankAccountCreateSerializer.Meta.fields
+
+
+class UserBaseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BankAccount
-        fields = ['id', 'bank', 'branch', 'account_name', 'account_number']
+        model = User
+        fields = [
+            'address',
+            'bank_account',
+            'birthday',
+            'education_level',
+            'email',
+            'first_name',
+            'id_card_image',
+            'id_card_number',
+            'image',
+            'last_name',
+            'occupation',
+            'phone_number',
+            'sex',
+        ]
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(UserBaseSerializer):
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
     bank_account = BankAccountCreateSerializer(allow_null=True)
 
-    class Meta:
-        model = User
-        fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'password',
-            'confirm_password',
-            'sex',
-            'birthday',
-            'id_card_number',
-            'id_card_image',
-            'image',
-            'address',
-            'phone_number',
-            'education_level',
-            'occupation',
-            'bank_account',
-        ]
+    class Meta(UserBaseSerializer.Meta):
+        fields = sorted(['password', 'confirm_password'] + UserBaseSerializer.Meta.fields)
 
     def validate(self, data):
         if data.get('password') != data.get('confirm_password'):
@@ -54,24 +56,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return User.objects.create_user(bank_account=bank_account, **validated_data)
 
 
-class UserListSerializer(serializers.ModelSerializer):
+class UserListSerializer(UserBaseSerializer):
     bank_account = BankAccountListSerializer()
 
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'sex',
-            'birthday',
-            'id_card_number',
-            'id_card_image',
-            'image',
-            'address',
-            'phone_number',
-            'education_level',
-            'occupation',
-            'bank_account',
-        ]
+    class Meta(UserBaseSerializer.Meta):
+        fields = ['id'] + UserBaseSerializer.Meta.fields
