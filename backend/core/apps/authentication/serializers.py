@@ -35,7 +35,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserCreateSerializer(UserBaseSerializer):
+class UserWriteSerializer(UserBaseSerializer):
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
@@ -50,13 +50,13 @@ class UserCreateSerializer(UserBaseSerializer):
         return data
 
     def create(self, validated_data):
-        validated_data.pop('confirm_password')
-        bank_account_data = validated_data.pop('bank_account')
+        validated_data.pop('confirm_password', None)
+        bank_account_data = validated_data.pop('bank_account', None)
         bank_account = BankAccount.objects.create(**bank_account_data) if bank_account_data else None
         return User.objects.create_user(bank_account=bank_account, **validated_data)
 
 
-class UserListSerializer(UserBaseSerializer):
+class UserReadSerializer(UserBaseSerializer):
     bank_account = BankAccountListSerializer()
 
     class Meta(UserBaseSerializer.Meta):
