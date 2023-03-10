@@ -1,18 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from core.apps.authentication.models import BankAccount, User
-
-
-class BankAccountCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BankAccount
-        fields = ['account_name', 'account_number', 'bank', 'branch']
-
-
-class BankAccountListSerializer(BankAccountCreateSerializer):
-    class Meta(BankAccountCreateSerializer.Meta):
-        fields = ['id'] + BankAccountCreateSerializer.Meta.fields
+from core.apps.authentication.models import User
+from core.apps.finance.models import BankAccount
+from core.apps.finance.serializers import BankAccountCreateSerializer, BankAccountListSerializer
 
 
 class UserBaseSerializer(serializers.ModelSerializer):
@@ -36,10 +27,12 @@ class UserBaseSerializer(serializers.ModelSerializer):
 
 
 class UserWriteSerializer(UserBaseSerializer):
-    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
-    password = serializers.CharField(write_only=True)
+    bank_account = BankAccountCreateSerializer()
     confirm_password = serializers.CharField(write_only=True)
-    bank_account = BankAccountCreateSerializer(allow_null=True)
+    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
+    id_card_number = serializers.CharField(validators=[UniqueValidator(queryset=User.objects.all())])
+    password = serializers.CharField(write_only=True)
+    phone_number = serializers.CharField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta(UserBaseSerializer.Meta):
         fields = sorted(['password', 'confirm_password'] + UserBaseSerializer.Meta.fields)
