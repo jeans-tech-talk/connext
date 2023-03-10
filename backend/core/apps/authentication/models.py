@@ -3,20 +3,9 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
+from encrypted_fields.fields import EncryptedCharField
 
 from core.apps.authentication.choices import Sex, EducationLevel, Occupation
-
-
-class BankAccount(models.Model):
-    bank = models.CharField(max_length=150)
-    branch = models.CharField(max_length=150)
-    account_name = models.CharField(max_length=150)
-    account_number = models.CharField(max_length=150)
-
-    objects = models.Manager()
-
-    class Meta:
-        db_table = 'authentication_bank_account'
 
 
 class CustomUserManager(BaseUserManager):
@@ -41,23 +30,24 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
-    sex = models.CharField(max_length=6, choices=Sex.choices, blank=True)
-    birthday = models.DateField(null=True)
-    id_card_number = models.CharField(max_length=17, blank=True)
-    id_card_image = models.ImageField(upload_to='id-card-images/%Y-%m-%d/', blank=True)
-    image = models.ImageField(upload_to='user-images/%Y-%m-%d/', blank=True)
-    address = models.TextField(blank=True)
-    phone_number = models.CharField(max_length=12, blank=True)
-    education_level = models.CharField(max_length=18, choices=EducationLevel.choices, blank=True)
-    occupation = models.CharField(max_length=29, choices=Occupation.choices, blank=True)
+    sex = models.CharField(max_length=6, choices=Sex.choices)
+    birthday = models.DateField()
+    id_card_number = EncryptedCharField(max_length=17, unique=True)
+    id_card_image = models.ImageField(upload_to='id-card-images/%Y-%m-%d/')
+    image = models.ImageField(upload_to='user-images/%Y-%m-%d/')
+    address = models.TextField()
+    phone_number = models.CharField(max_length=12, unique=True)
+    education_level = models.CharField(max_length=18, choices=EducationLevel.choices)
+    occupation = models.CharField(max_length=29, choices=Occupation.choices)
     bank_account = models.OneToOneField(
-        'authentication.BankAccount',
+        'finance.BankAccount',
         on_delete=models.SET_NULL,
         related_name='user',
         null=True,
+        blank=True,
     )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -70,7 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     class Meta:
-        db_table = 'authentication_custom_user'
+        db_table = 'authentication_user'
 
 
 User = get_user_model()
