@@ -30,28 +30,19 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
-    sex = models.CharField(max_length=6, choices=Sex.choices)
-    birthday = models.DateField()
-    id_card_number = EncryptedCharField(max_length=17, unique=True)
-    id_card_image = models.ImageField(upload_to='id-card-images/%Y-%m-%d/')
-    image = models.ImageField(upload_to='user-images/%Y-%m-%d/')
     address = models.TextField()
-    phone_number = models.CharField(max_length=12, unique=True)
-    education_level = models.CharField(max_length=18, choices=EducationLevel.choices)
-    occupation = models.CharField(max_length=29, choices=Occupation.choices)
-    bank_account = models.OneToOneField(
-        'finance.BankAccount',
-        on_delete=models.SET_NULL,
-        related_name='user',
-        null=True,
-        blank=True,
-    )
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    birthday = models.DateField()
     date_joined = models.DateTimeField(default=timezone.now)
+    education_level = models.CharField(max_length=18, choices=EducationLevel.choices)
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=50)
+    id_card_number = EncryptedCharField(max_length=17, unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    last_name = models.CharField(max_length=50)
+    occupation = models.CharField(max_length=29, choices=Occupation.choices)
+    phone_number = models.CharField(max_length=12, unique=True)
+    sex = models.CharField(max_length=6, choices=Sex.choices)
 
     objects = CustomUserManager()
 
