@@ -1,7 +1,7 @@
 def deep_get(dictionary, keys, default=None):
     """
     Example:
-        validated_data = {'bank_account': {'account_type': 'Savings Account', 'account_number': '817-3-63080-8'}}
+        validated_data = {'bank_account': {'account_type': 'Savings Account'}}
         deep_get(validated_data, 'bank_account.account_type') # => Savings Account
         deep_get(validated_data, 'bank_account.branch') # => None
         deep_get(validated_data, 'address') # => None
