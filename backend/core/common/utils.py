@@ -4,7 +4,7 @@ def deep_get(dictionary, keys, default=None):
         validated_data = {'bank_account': {'account_type': 'Savings Account'}}
         deep_get(validated_data, 'bank_account.account_type') # => Savings Account
         deep_get(validated_data, 'bank_account.branch') # => None
-        deep_get(validated_data, 'address') # => None
+        deep_get(validated_data, 'address', default='') # => ''
     """
     keys_list = keys.split('.')
     for key in keys_list:
