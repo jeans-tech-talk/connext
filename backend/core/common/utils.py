@@ -1,5 +1,5 @@
-def deep_get(data: dict, key: str, default=None):
-    for key in key.split('.'):
+def deep_get(data: dict, keys: str, default=None):
+    for key in keys.split('.'):
         try:
             data = data[key]
         except KeyError:
