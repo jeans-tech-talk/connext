@@ -1,15 +1,7 @@
-def deep_get(dictionary, keys, default=None):
-    """
-    Example:
-        validated_data = {'bank_account': {'account_type': 'Savings Account'}}
-        deep_get(validated_data, 'bank_account.account_type') # => Savings Account
-        deep_get(validated_data, 'bank_account.branch') # => None
-        deep_get(validated_data, 'address', default='') # => ''
-    """
-    keys_list = keys.split('.')
-    for key in keys_list:
+def deep_get(data: dict, key: str, default=None):
+    for key in key.split('.'):
         try:
-            dictionary = dictionary[key]
-        except (TypeError, KeyError):
+            data = data[key]
+        except KeyError:
             return default
-    return dictionary if dictionary is not None else default
+    return data if data is not None else default
