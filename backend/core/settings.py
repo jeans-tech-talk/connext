@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'core.apps.authentication',
+    'core.apps.finance',
 ]
 
 MIDDLEWARE = [
@@ -142,7 +143,10 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 # https://www.django-rest-framework.org/api-guide/settings/
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
 }
+
+# Django Fernet Encrypted Fields Settings
+# https://pypi.org/project/django-fernet-encrypted-fields/
+
+SALT_KEY = env('SALT_KEY')
