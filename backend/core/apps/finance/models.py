@@ -1,5 +1,6 @@
 from django.db import models
 
+from core.apps.authentication.models import User
 from core.apps.finance.choices import AccountType
 
 
@@ -9,11 +10,7 @@ class BankAccount(models.Model):
     account_type = models.CharField(max_length=15, choices=AccountType.choices)
     bank = models.CharField(max_length=150)
     branch = models.CharField(max_length=150)
-    user = models.OneToOneField(
-        'authentication.CustomUser',
-        on_delete=models.CASCADE,
-        related_name='bank_account',
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='bank_account')
 
     objects = models.Manager()
 
